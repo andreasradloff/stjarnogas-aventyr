@@ -33,8 +33,6 @@ function create() {
     getSound = game.add.audio('get');
 invincible = false
 score = 0
-scoreDisplay = game.add.text(20, 20, "STJÄRNÖGAS\nÄVENTYR", { font: "20px Arial", fontWeight: 'bold', fill: "#ffffff", align: "left", stroke: '#AAAA33', strokeThickness: 4})
-
 scoreDisplay = game.add.text(20, 10, 0, { font: "10px Arial", fontWeight: 'bold', fill: "#ffffff", align: "left", stroke: '#000000', strokeThickness: 2})
 scoreDisplay.fixedToCamera = true;
 scoreIcon = game.add.sprite(10,10,'apple')
