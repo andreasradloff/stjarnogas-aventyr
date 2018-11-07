@@ -1,8 +1,14 @@
-var game = new Phaser.Game(256, 240, Phaser.CANVAS, '', {
+var game = new Phaser.Game(256, 340, Phaser.CANVAS, '', {
   preload: preload,
   create: create,
   update: update
 }, false, false);
+
+var left=false;
+var right=false;
+var duck= false;
+var fire=false;
+var jump=false;
 
 function preload() {
   game.load.spritesheet('tiles', 'tiles.png', 16, 16);
@@ -25,14 +31,22 @@ function preload() {
     game.load.audio('warp', ['warp.mp3']);
 
   game.load.audio('argh', ['argh.ogg']);
+
+    game.load.spritesheet('buttonjump', 'button-round-a.png',96,96);
+   game.load.spritesheet('buttonhorizontal', 'button-horizontal.png',96,64);
+
+
+
 }
 
 function create() {
+
       music = game.add.audio('music', 1, true);
     music.play();
     getSound = game.add.audio('get');
 invincible = false
 score = 0
+
 scoreDisplay = game.add.text(20, 10, 0, { font: "10px Arial", fontWeight: 'bold', fill: "#ffffff", align: "left", stroke: '#000000', strokeThickness: 2})
 scoreDisplay.fixedToCamera = true;
 scoreIcon = game.add.sprite(10,10,'apple')
@@ -89,6 +103,35 @@ scoreIcon.fixedToCamera = true;
   game.camera.follow(player);
 
   cursors = game.input.keyboard.createCursorKeys();
+
+      // create our virtual game controller buttons 
+    buttonjump = game.add.button(180, 270, 'buttonjump', null, this, 0, 1, 0, 1);  //game, x, y, key, callback, callbackContext, overFrame, outFrame, downFrame, upFrame
+    buttonjump.fixedToCamera = true;  //our buttons should stay on the same place  
+    buttonjump.events.onInputOver.add(function(){jump=true;});
+    buttonjump.events.onInputOut.add(function(){jump=false;});
+    buttonjump.events.onInputDown.add(function(){jump=true;});
+    buttonjump.events.onInputUp.add(function(){jump=false;});    
+        buttonjump.scale.setTo(0.5);
+
+
+    buttonleft = game.add.button(0, 270, 'buttonhorizontal', null, this, 0, 1, 0, 1);
+    buttonleft.fixedToCamera = true;
+    buttonleft.events.onInputOver.add(function(){left=true;});
+    buttonleft.events.onInputOut.add(function(){left=false;});
+    buttonleft.events.onInputDown.add(function(){left=true;});
+    buttonleft.events.onInputUp.add(function(){left=false;});
+        buttonleft.scale.setTo(0.5);
+
+
+    buttonright = game.add.button(80, 270, 'buttonhorizontal', null, this, 0, 1, 0, 1);
+    buttonright.fixedToCamera = true;
+    buttonright.events.onInputOver.add(function(){right=true;});
+    buttonright.events.onInputOut.add(function(){right=false;});
+    buttonright.events.onInputDown.add(function(){right=true;});
+    buttonright.events.onInputUp.add(function(){right=false;});
+    buttonright.scale.setTo(0.5);
+
+    
 }
 
 function update() {
@@ -102,11 +145,11 @@ function update() {
 
   if (player.body.enable) {
     player.body.velocity.x = 0;
-    if (cursors.left.isDown) {
+    if (left || cursors.left.isDown) {
       player.body.velocity.x = -90;
       player.animations.play('walkLeft');
       player.goesRight = false;
-    } else if (cursors.right.isDown) {
+    } else if (right || cursors.right.isDown) {
       player.body.velocity.x = 90;
       player.animations.play('walkRight');
       player.goesRight = true;
@@ -116,7 +159,7 @@ function update() {
       else player.frame = 7;
     }
 
-    if (cursors.up.isDown && player.body.onFloor()) {
+    if ((jump || cursors.up.isDown) && player.body.onFloor()) {
       player.body.velocity.y = -190;
       player.animations.stop();
     }
